@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 import Modal from "react-modal";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import Test from "./Test";
-import { FaEdit } from "react-icons/fa";
-import { MdDelete } from "react-icons/md";
+
 import 'remixicon/fonts/remixicon.css';
 
 
