@@ -129,13 +129,13 @@ function App() {
         <h1 className="text-3xl font-bold text-center mb-8 text-blue-600 card-title">
           React Form Builder
         </h1>
-        <div className="flex space-x-4">
+        <div className=" space-x-4">
 
   {/* This wrapper will stack vertically on small screens and display side-by-side on larger screens */}
-  <div className="flex flex-col md:flex-row space-y-4 md:space-x-4">
+  <div className="flex flex-col md:flex-row space-y-4 md:space-x-4 mx-auto">
 
     {/* Input Fields section will appear first on mobile */}
-    <div className="bg-white p-4 rounded-[.25rem] shadow-lg order-1 md:order-none">
+    <div className="bg-white p-4 rounded-[.25rem] shadow-lg order-1 md:order-none mx-auto">
       <h3 className="font-bold text-xl mb-4 text-blue-600 card-title">
         Input Fields
       </h3>
@@ -151,7 +151,7 @@ function App() {
     </div>
 
     {/* Form Builder section will appear below Input Fields on mobile */}
-    <div className="w-full md:w-1/2 bg-white p-4 rounded-[.25rem] shadow-lg order-2 md:order-none">
+    <div className="w-full md:w-1/2 bg-white p-4 rounded-[.25rem] shadow-lg order-2 md:order-none mx-auto">
       <h3 className="font-bold text-xl mb-4 text-blue-600 card-title">
         Form Builder
       </h3>
@@ -208,7 +208,7 @@ function App() {
     </div>
 
     {/* Preview section */}
-    <div className="w-full md:w-1/4 order-3 md:order-none">
+    <div className="w-full md:w-1/4 order-3 md:order-none mx-auto">
       <button
         className="mb-4 p-2 bg-[#3e60d5] text-white font-jost rounded-[.25rem] w-full"
         onClick={() => setPreview(!preview)}
@@ -264,143 +264,156 @@ function App() {
       )}
     </div>
   </div>
+
+
+
+
+
+
 </div>
+
+{/* Code Display */}
+{preview && (
+  <div className="mt-8 p-4 bg-gray-800 text-white rounded-[.25rem] shadow-lg text-sm font-jost mx-auto">
+    <div className="flex justify-between items-center">
+      <h3 className="font-bold text-xl mb-2 font-jost text-slate-200">Generated Code</h3>
+      <button
+        onClick={() => navigator.clipboard.writeText(getFieldCode())}
+        className="text-slate-200 hover:text-white transition-all"
+      >
+        <i className="ri-file-copy-line text-xl"></i> {/* You can replace this icon with any copy icon */}
+      </button>
+    </div>
+    <pre className="p-4 bg-gray-900 text-slate-200 rounded-[.25rem] overflow-auto">
+      {getFieldCode()}
+    </pre>
+  </div>
+)}
 
 
         </div>
 
         {/* edit model  */}
         <Modal
-          isOpen={!!editField}
-          onRequestClose={() => setEditField(null)}
-          contentLabel="Edit Field"
-          className="w-full max-w-lg mx-auto   rounded-[.25rem] shadow-lg flex items-center justify-center "
-          overlayClassName="fixed inset-0  bg-[#58575739] flex items-center justify-center  " // Gray overlay for the background
-        >
-          <div className="bg-[#fafafa] p-6 rounded-[.25rem] shadow-lg w-full">
-            <div className="flex justify-between">
-              <h2 className=" font-bold mb-4  card-title font-jost">
-                Edit Field
-              </h2>
-              <button
-                onClick={() => setEditField(null)}
-                className=" mt-[-30px]"
-              >
-              <i class="ri-close-large-line text-[&#xF4C8] "></i>
-              </button>
-            </div>
-            <label className="block mb-3  text-sm text-slate-700 dark:text-slate-400 cursor-pointer">
-              Label:
-              <input
-                type="text"
-                value={formValues.label}
-                onChange={(e) =>
-                  setFormValues({ ...formValues, label: e.target.value })
+  isOpen={!!editField}
+  onRequestClose={() => setEditField(null)}
+  contentLabel="Edit Field"
+  className="w-full max-w-lg md:max-w-2xl lg:max-w-3xl mx-auto rounded-[.25rem] shadow-lg flex items-center justify-center p-4"
+  overlayClassName="fixed inset-0 bg-[#58575739] flex items-center justify-center"
+>
+  <div className="bg-[#fafafa] p-4 md:p-6 rounded-[.25rem] shadow-lg w-full">
+    <div className="flex justify-between items-center">
+      <h2 className="text-lg md:text-xl font-bold mb-4 font-jost">
+        Edit Field
+      </h2>
+      <button onClick={() => setEditField(null)} className="mt-[-20px] md:mt-[-30px]">
+        <i className="ri-close-large-line text-[#F4C8]"></i>
+      </button>
+    </div>
+    <label className="block mb-3 text-sm md:text-base text-slate-700 dark:text-slate-400">
+      Label:
+      <input
+        type="text"
+        value={formValues.label}
+        onChange={(e) =>
+          setFormValues({ ...formValues, label: e.target.value })
+        }
+        className="w-full p-1 text-xs md:text-sm border rounded-[.25rem] text-slate-500 dark:text-slate-400"
+      />
+    </label>
+
+    {(formValues.type === "text" ||
+      formValues.type === "email" ||
+      formValues.type === "tel" ||
+      formValues.type === "textarea") && (
+      <label className="block mb-3 text-sm md:text-base text-slate-700 dark:text-slate-400">
+        Placeholder:
+        <input
+          type="text"
+          value={formValues.placeholder}
+          onChange={(e) =>
+            setFormValues({ ...formValues, placeholder: e.target.value })
+          }
+          className="w-full p-1 text-xs md:text-sm border rounded-[.25rem] text-slate-500 dark:text-slate-400"
+        />
+      </label>
+    )}
+
+    {formValues.type === "select" && (
+      <>
+        <label className="block mb-3 text-sm md:text-base text-slate-700 dark:text-slate-400">
+          Options:
+          <div className="flex mb-2 gap-2">
+            <input
+              type="text"
+              value={newOption}
+              onChange={(e) => setNewOption(e.target.value)}
+              className="w-[70%] md:w-[75%] p-1 text-xs md:text-sm border rounded-[.25rem] text-slate-500 dark:text-slate-400"
+            />
+            <button
+              onClick={() => {
+                if (newOption.trim()) {
+                  setFormValues({
+                    ...formValues,
+                    options: [...formValues.options, newOption],
+                  });
+                  setNewOption("");
                 }
-                className="w-full p-1 text-xs border rounded-[.25rem]  text-slate-500 dark:text-slate-400 cursor-pointer"
-              />
-            </label>
-            {(formValues.type === "text" ||
-              formValues.type === "email" ||
-              formValues.type === "tel" ||
-              formValues.type === "textarea") && (
-              <label className="block mb-3  text-sm text-slate-700 dark:text-slate-400 cursor-pointer">
-                Placeholder:
-                <input
-                  type="text"
-                  value={formValues.placeholder}
-                  onChange={(e) =>
+              }}
+              className="bg-[#8B5CF6] text-white w-[30%] md:w-[25%] rounded-[.25rem] p-1 text-xs md:text-sm"
+            >
+              Add Option
+            </button>
+          </div>
+          <ul>
+            {formValues.options.map((option, index) => (
+              <li
+                key={index}
+                className="flex justify-between items-center border-b py-1"
+              >
+                {option}
+                <button
+                  onClick={() =>
                     setFormValues({
                       ...formValues,
-                      placeholder: e.target.value,
+                      options: formValues.options.filter(
+                        (_, i) => i !== index
+                      ),
                     })
                   }
-                  className="w-full p-1 border rounded-[.25rem] text-sm text-slate-500 dark:text-slate-400 cursor-pointer"
-                />
-              </label>
-            )}
-            {formValues.type === "select" && (
-              <>
-                <label className="block mb-3  text-sm text-slate-700 dark:text-slate-400 cursor-pointer">
-                  Options:
-                  <div className="flex mb-2 gap-2">
-                    <input
-                      type="text"
-                      value={newOption}
-                      onChange={(e) => setNewOption(e.target.value)}
-                      className="w-[75%] p-1 border rounded-[.25rem] text-sm text-slate-500 dark:text-slate-400 cursor-pointer"
-                    />
-                    <button
-                      onClick={() => {
-                        if (newOption.trim()) {
-                          setFormValues({
-                            ...formValues,
-                            options: [...formValues.options, newOption],
-                          });
-                          setNewOption("");
-                        }
-                      }}
-                      className="  bg-[#8B5CF6] opacity-[1] font-jost rounded-[.25rem]  w-[25%] text-sm text-white dark:text-slate-400 cursor-pointer"
-                    >
-                     <span className="text-xs font-jost" > Add Option</span>
-                    </button>
-                  </div>
-                  <ul>
-                    {formValues.options.map((option, index) => (
-                      <li
-                        key={index}
-                        className="flex justify-between items-center border-b py-1"
-                      >
-                        {option}
-                        <button
-                          onClick={() =>
-                            setFormValues({
-                              ...formValues,
-                              options: formValues.options.filter(
-                                (_, i) => i !== index
-                              ),
-                            })
-                          }
-                          className="text-red-500 hover:text-red-600"
-                        >
-                          Remove
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                </label>
-              </>
-            )}
-          <div className="flex justify-around gap-10 mt-5">
-          <button
-              onClick={() => {
-                addField(editField);
-                setEditField(null);
-              }}
-          className="w-[30%] mb-4 p-1 bg-[#3e60d5] opacity-[1] text-white font-jost rounded-[.25rem]  "
-            >
-              Save
-            </button>
-            <button
-              onClick={() => setEditField(null)}
-            className="w-[30%] mb-4 p-1 bg-[#3e60d5] opacity-[1] text-white font-jost rounded-[.25rem]  "
-            >
-              Cancel
-            </button>
-          </div>
-          </div>
-        </Modal>
+                  className="text-red-500 hover:text-red-600"
+                >
+                  Remove
+                </button>
+              </li>
+            ))}
+          </ul>
+        </label>
+      </>
+    )}
 
-        {/* Code Display */}
-        {preview && (
-          <div className="mt-8 p-4 bg-gray-800 text-white rounded-[.25rem] shadow-lg text-sm font-jost">
-            <h3 className="font-bold text-xl mb-2 font-jost text-slate-200">Generated Code</h3>
-            <pre className="p-4 bg-gray-900 text-slate-200 rounded-[.25rem] overflow-auto">
-              {getFieldCode()}
-            </pre>
-          </div>
-        )}
+    <div className="flex justify-around gap-6 md:gap-10 mt-5">
+      <button
+        onClick={() => {
+          addField(editField);
+          setEditField(null);
+        }}
+        className="w-[40%] md:w-[30%] mb-4 p-1 bg-[#3e60d5] text-white rounded-[.25rem]"
+      >
+        Save
+      </button>
+      <button
+        onClick={() => setEditField(null)}
+        className="w-[40%] md:w-[30%] mb-4 p-1 bg-[#3e60d5] text-white rounded-[.25rem]"
+      >
+        Cancel
+      </button>
+    </div>
+  </div>
+</Modal>
 
+
+       
       {/* <Test/> */}
     </>
   );
