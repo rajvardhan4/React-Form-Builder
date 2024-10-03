@@ -130,135 +130,143 @@ function App() {
           React Form Builder
         </h1>
         <div className="flex space-x-4">
-          <div className=" bg-white p-4 rounded-[.25rem] shadow-lg">
-            <h3 className="font-bold text-xl mb-4 text-blue-600 card-title">
-              Input Fields
-            </h3>
-            {formFields.map((field, index) => (
-              <div
-                key={index}
-                className="p-2 mb-2 w-[250px] text-sm text-slate-700 dark:text-slate-400 cursor-pointer hover:text-slate-100 bg-slate-300 hover:bg-[#6c8effdf] rounded-[.25rem] text-center"
-                onClick={() => addField(field)}
-              >
-                {field.label}
+
+  {/* This wrapper will stack vertically on small screens and display side-by-side on larger screens */}
+  <div className="flex flex-col md:flex-row space-y-4 md:space-x-4">
+
+    {/* Input Fields section will appear first on mobile */}
+    <div className="bg-white p-4 rounded-[.25rem] shadow-lg order-1 md:order-none">
+      <h3 className="font-bold text-xl mb-4 text-blue-600 card-title">
+        Input Fields
+      </h3>
+      {formFields.map((field, index) => (
+        <div
+          key={index}
+          className="p-2 mb-2 w-[250px] text-sm text-slate-700 dark:text-slate-400 cursor-pointer hover:text-slate-100 bg-slate-300 hover:bg-[#6c8effdf] rounded-[.25rem] text-center"
+          onClick={() => addField(field)}
+        >
+          {field.label}
+        </div>
+      ))}
+    </div>
+
+    {/* Form Builder section will appear below Input Fields on mobile */}
+    <div className="w-full md:w-1/2 bg-white p-4 rounded-[.25rem] shadow-lg order-2 md:order-none">
+      <h3 className="font-bold text-xl mb-4 text-blue-600 card-title">
+        Form Builder
+      </h3>
+      <DragDropContext onDragEnd={onDragEnd}>
+        <Droppable droppableId="form-builder">
+          {(provided) => (
+            <div
+              ref={provided.innerRef}
+              {...provided.droppableProps}
+              className="p-4 border-2 border-dashed border-blue-300 rounded-[.25rem] min-h-[300px] bg-gray-50"
+            >
+              {form.length === 0 && (
+                <p className="text-gray-400 text-center">
+                  Drag and drop fields here
+                </p>
+              )}
+              {form.map((field, index) => (
+                <Draggable
+                  key={field.id}
+                  draggableId={field.id}
+                  index={index}
+                >
+                  {(provided) => (
+                    <div
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      {...provided.dragHandleProps}
+                      className="p-2 mb-2 border border-blue-200 bg-slate-100 rounded-[.25rem] flex justify-between items-center text-sm text-slate-700 dark:text-slate-400 cursor-pointer"
+                    >
+                      <span>{field.label}</span>
+                      <div>
+                        <button
+                          className="text-slate-800 hover:text-yellow-600 mr-2 text-[1rem]"
+                          onClick={() => handleEditField(field)}
+                        >
+                          <i className="ri-edit-line"></i>
+                        </button>
+                        <button
+                          className="text-slate-600 hover:text-red-600 text-[1rem]"
+                          onClick={() => deleteField(field.id)}
+                        >
+                          <i className="ri-delete-bin-2-fill"></i>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </Draggable>
+              ))}
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
+      </DragDropContext>
+    </div>
+
+    {/* Preview section */}
+    <div className="w-full md:w-1/4 order-3 md:order-none">
+      <button
+        className="mb-4 p-2 bg-[#3e60d5] text-white font-jost rounded-[.25rem] w-full"
+        onClick={() => setPreview(!preview)}
+      >
+        {preview ? "Back to Edit" : "Preview"}
+      </button>
+      {preview && (
+        <div className="p-4 bg-white rounded-[.25rem] shadow-lg">
+          <h3 className="font-bold text-lg mb-2 card-title">Preview</h3>
+          <div className="overflow-auto text-sm text-slate-700 dark:text-slate-400">
+            {form.map((field, index) => (
+              <div key={index} className="mb-4">
+                {field.type !== "radio" &&
+                  field.type !== "checkbox" &&
+                  field.type !== "button" && (
+                    <label className="block mb-2 text-sm text-slate-500 dark:text-slate-400">
+                      {field.label}
+                    </label>
+                  )}
+                {field.type === "textarea" ? (
+                  <textarea
+                    placeholder={field.placeholder}
+                    className="w-full p-2 border rounded-[.25rem]"
+                  ></textarea>
+                ) : field.type === "select" ? (
+                  <select className="w-full p-2 border rounded-[.25rem]">
+                    {field.options.map((option, i) => (
+                      <option key={i} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
+                ) : field.type === "radio" || field.type === "checkbox" ? (
+                  <label className="flex items-center">
+                    <input type={field.type} className="mr-2" />
+                    {field.label}
+                  </label>
+                ) : field.type === "button" ? (
+                  <button className="p-2 bg-green-500 text-white rounded-[.25rem]">
+                    {field.label}
+                  </button>
+                ) : (
+                  <input
+                    type={field.type}
+                    placeholder={field.placeholder}
+                    className="w-full p-2 border rounded-[.25rem]"
+                  />
+                )}
               </div>
             ))}
           </div>
+        </div>
+      )}
+    </div>
+  </div>
+</div>
 
-          <div className="w-1/2 bg-white p-4 rounded-[.25rem] shadow-lg">
-            <h3 className="font-bold text-xl mb-4 text-blue-600 card-title">
-              Form Builder
-            </h3>
-            <DragDropContext onDragEnd={onDragEnd}>
-              <Droppable droppableId="form-builder">
-                {(provided) => (
-                  <div
-                    ref={provided.innerRef}
-                    {...provided.droppableProps}
-                    className="p-4 border-2 border-dashed border-blue-300 rounded-[.25rem] min-h-[300px] bg-gray-50"
-                  >
-                    {form.length === 0 && (
-                      <p className="text-gray-400 text-center">
-                        Drag and drop fields here
-                      </p>
-                    )}
-                    {form.map((field, index) => (
-                      <Draggable
-                        key={field.id}
-                        draggableId={field.id}
-                        index={index}
-                      >
-                        {(provided) => (
-                          <div
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                            className="p-2 mb-2 border border-blue-200 bg-slate-100 rounded-[.25rem] flex justify-between items-center text-sm text-slate-700 dark:text-slate-400 cursor-pointer"
-                          >
-                            <span>{field.label}</span>
-                            <div >
-                              <button
-                                className="text-slate-800 hover:text-yellow-600 mr-2 text-[1rem]"
-                                onClick={() => handleEditField(field)}
-                              >
-                               <i class="ri-edit-line"></i>
-                              </button>
-                              <button
-                                className="text-slate-600 hover:text-red-600 text-[1rem]"
-                                onClick={() => deleteField(field.id)}
-                              >
-                              <i class="ri-delete-bin-2-fill"></i>
-                              </button>
-                            </div>
-                          </div>
-                        )}
-                      </Draggable>
-                    ))}
-                    {provided.placeholder}
-                  </div>
-                )}
-              </Droppable>
-            </DragDropContext>
-          </div>
 
-          <div className="w-1/4">
-            <button
-              className="mb-4 p-2 bg-[#3e60d5] opacity-[1] text-white font-jost rounded-[.25rem] w-full "
-              onClick={() => setPreview(!preview)}
-            >
-              {preview ? "Back to Edit" : "Preview"}
-            </button>
-            {preview && (
-              <div className="p-4 bg-white rounded-[.25rem] shadow-lg flex flex-col">
-                <h3 className="font-bold text-lg mb-2   card-title">
-                  Preview
-                </h3>
-                <div className="flex-1 overflow-auto text-sm text-slate-700 dark:text-slate-400 cursor-pointer">
-                  {form.map((field, index) => (
-                    <div key={index} className="mb-4 ">
-                      {field.type !== "radio" &&
-                        field.type !== "checkbox" &&
-                        field.type !== "button" && (
-                          <label className="block mb-2  text-sm text-slate-500 dark:text-slate-400 cursor-pointer">
-                            {field.label}
-                          </label>
-                        )}
-                      {field.type === "textarea" ? (
-                        <textarea
-                          placeholder={field.placeholder}
-                          className="w-full p-2 border rounded-[.25rem]"
-                        ></textarea>
-                      ) : field.type === "select" ? (
-                        <select className="w-full p-2 border rounded-[.25rem]">
-                          {field.options.map((option, i) => (
-                            <option key={i} value={option}>
-                              {option}
-                            </option>
-                          ))}
-                        </select>
-                      ) : field.type === "radio" ||
-                        field.type === "checkbox" ? (
-                        <label className="flex items-center">
-                          <input type={field.type} className="mr-2" />
-                          {field.label}
-                        </label>
-                      ) : field.type === "button" ? (
-                        <button className="p-2 bg-green-500 text-white rounded-[.25rem]">
-                          {field.label}
-                        </button>
-                      ) : (
-                        <input
-                          type={field.type}
-                          placeholder={field.placeholder}
-                          className="w-full p-2 border rounded-[.25rem]"
-                        />
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
         </div>
 
         {/* edit model  */}
@@ -392,7 +400,6 @@ function App() {
             </pre>
           </div>
         )}
-      </div>
 
       {/* <Test/> */}
     </>
